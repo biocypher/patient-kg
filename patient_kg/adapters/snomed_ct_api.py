@@ -1,6 +1,6 @@
 import pandas as pd
 
-description_file = 'template_package/adapters/sct2_Description_Snapshot-en_INT_20231001.txt'
+description_file = 'patient_kg/adapters/sct2_Description_Snapshot-en_INT_20231001.txt'
 snomed_df = pd.read_csv(description_file, delimiter='\t', header=0)
 
 def get_snomed_name(code):
