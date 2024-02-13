@@ -1,20 +1,14 @@
-import math
-import random
-import string
 from enum import Enum, auto
 from itertools import chain
 from typing import Optional
-import icd10
 import numpy as np
 
 import pandas as pd
 import yaml
-from biocypher._create import BioCypherNode
 from biocypher._logger import logger
 
 from patient_kg.adapters.edge_data_classes import Edge
 from patient_kg.adapters.node_data_classes import Node
-from patient_kg.adapters.snomed_ct_api import getConceptById
 
 logger.debug(f"Loading module {__name__}.")
 

@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 import icd10
 from biocypher import logger
 
-from patient_kg.adapters.snomed_ct_api import getConceptById, get_snomed_name
+from patient_kg.adapters.snomed_ct_api import get_snomed_name
 
 
 class Node(ABC):

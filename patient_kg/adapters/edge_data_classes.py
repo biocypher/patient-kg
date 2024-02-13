@@ -2,8 +2,6 @@ from abc import ABC, abstractmethod
 
 import icd10
 
-from patient_kg.adapters.snomed_ct_api import getConceptById
-
 
 class Edge(ABC):
 
