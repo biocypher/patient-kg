@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "patient-kg"
+version = "0.0.1"
+description = "Knowledge Graph for (german) clinical patient data (ICD10, Snomed CT, Loinc, OPS)"
+authors = [
+    "Nils Krehl <nils.krehl@stud.uni-heidelberg.de>"
+]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+# biocypher = "^0.5.32"
+# TODO: use pacthed version of BioCypher to be able to parse the ontology in reasonable time
+biocypher = { git = "https://github.com/biocypher/biocypher.git", branch = "performance_improvment_ontology_parsing" }
+jupyterlab = "^4.0.8"
+notebook = "^7.0.6"
+icd10-cm = "^0.0.5"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
