@@ -5,7 +5,7 @@ import yaml
 
 from patient_kg.adapters.node_data_classes import Node
 
-mapping_file_path = "./data/input/mapping.yaml" # "./data/example_input/mapping.yaml"
+mapping_file_path = "./data/mapping.yaml" # "./data/example_input/mapping.yaml"
 with open(mapping_file_path, 'r') as yaml_file:
     dataset_mapping = yaml.safe_load(yaml_file)
 
