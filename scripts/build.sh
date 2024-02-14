@@ -8,5 +8,6 @@ cp config/ontologies/ontology_ICD10CM_patched.ttl config/ontologies/ontology_ICD
 cp config/ontologies/ontology_loinc.ttl config/ontologies/ontology_loinc.ttl
 cp config/ontologies/ontology_snomed_ct.owl config/ontologies/ontology_snomed_ct.owl
 poetry install
+python3 generate_schema_config_for_data.py
 python3 create_knowledge_graph.py
 chmod -R 777 biocypher-log
