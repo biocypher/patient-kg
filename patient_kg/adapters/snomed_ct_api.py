@@ -4,7 +4,7 @@ description_file = 'patient_kg/adapters/sct2_Description_Snapshot-en_INT_2023100
 snomed_df = pd.read_csv(description_file, delimiter='\t', header=0)
 
 def get_snomed_name(code):
-    name = snomed_df[(snomed_df['conceptId'] == int(code)) & (snomed_df['typeId'] == 900000000000003001)]['term'].values[0]
+    name = snomed_df[(snomed_df['conceptId'] == int(code)) & (snomed_df['active'] == 1) & (snomed_df['typeId'] == 900000000000003001)]['term'].values[0]
     return name
 
 # Example usage
