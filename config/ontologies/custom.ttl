@@ -69,7 +69,7 @@ owl:OPS a owl:Class ;
      rdfs:subClassOf owl:Ontology ;
      rdfs:comment "OPS (Operationen- und Prozedurenschlüssel)." .
 
-owl:NotMappedToOntology a owl:Class ;
-     rdfs:label "NotMappedToOntology" ;
+owl:notmappedtoontology a owl:Class ;
+     rdfs:label "notmappedtoontology" ;
      rdfs:subClassOf owl:Ontology ;
      rdfs:comment "Parent node for all concepts not mapped to underlying ontology." .
