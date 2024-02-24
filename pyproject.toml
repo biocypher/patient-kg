@@ -16,6 +16,7 @@ biocypher = { git = "https://github.com/biocypher/biocypher.git", branch = "perf
 jupyterlab = "^4.0.8"
 notebook = "^7.0.6"
 icd10-cm = "^0.0.5"
+openpyxl = "^3.1.2"
 
 [build-system]
 requires = ["poetry-core"]
