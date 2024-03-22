@@ -12,7 +12,7 @@ readme = "README.md"
 python = "^3.10"
 # biocypher = "^0.5.32"
 # TODO: use pacthed version of BioCypher to be able to parse the ontology in reasonable time
-biocypher = { git = "https://github.com/biocypher/biocypher.git", branch = "performance_improvment_ontology_parsing" }
+biocypher = { git = "https://github.com/biocypher/biocypher.git", branch = "ontology_reverse_id_label_yaml_config" }
 jupyterlab = "^4.0.8"
 notebook = "^7.0.6"
 icd10-cm = "^0.0.5"
