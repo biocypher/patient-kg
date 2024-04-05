@@ -1,0 +1,5 @@
+Patient ID,Overall Survival (days),LAB_Eos. Granulozyten# ; /nl,ICD_B95,ICD_A02,Clinical_Oxygen saturation in Arterial blood ; %,Cancer_C01,OPS_1-100,not_mapped_discrete_value,not_mapped_continuous_value
+1,150,0.11,0,1,97,0,1,1,0.1
+2,164,0.12,1,1,96,0,1,0,0.0
+3,"",,,,,1,,,
+4,,0.14,0,0,94,,0,,

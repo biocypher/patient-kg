@@ -2,7 +2,7 @@
 A quick way to set up a BioCypher-driven knowledge graph pipeline.
 
 ## Using the GitHub Template functionality
-You can use this template in GitHub directly. Just select 
+You can use this template in GitHub directly. Just select
 `biocypher/project-template` as your template when creating a new repository
 on GitHub.
 
@@ -94,8 +94,8 @@ tutorial](https://biocypher.org/tutorial.html)). To do that, it uses the
 following components:
 
 - `create_knowledge_graph.py`: the main script that orchestrates the pipeline.
-It brings together the BioCypher package with the data sources. To build a 
-knowledge graph, you need at least one adapter (see below). For common 
+It brings together the BioCypher package with the data sources. To build a
+knowledge graph, you need at least one adapter (see below). For common
 resources, there may already be an adapter available in the BioCypher package or
 in a separate repository. You can also write your own adapter, should none be
 available for your data.
@@ -105,17 +105,17 @@ the adapter to the data source. In this case, it is a random generator script.
 If you want to create your own adapters, we recommend to use the example adapter
 as a blueprint and create one python file per data source, approproately named.
 You can then import the adapter in `create_knowledge_graph.py` and add it to
-the pipeline. This way, you ensure that others can easily install and use your 
+the pipeline. This way, you ensure that others can easily install and use your
 adapters.
 
 - `schema_config.yaml`: a configuration file (found in the `config` directory)
 that defines the schema of the knowledge graph. It is used by BioCypher to map
 the data source to the knowledge representation on the basis of ontology (see
-[this part of the BioCypher 
+[this part of the BioCypher
 tutorial](https://biocypher.org/tutorial-ontology.html)).
 
-- `biocypher_config.yaml`: a configuration file (found in the `config` 
-directory) that defines some BioCypher parameters, such as the mode, the 
+- `biocypher_config.yaml`: a configuration file (found in the `config`
+directory) that defines some BioCypher parameters, such as the mode, the
 separators used, and other options. More on its use can be found in the
 [Documentation](https://biocypher.org/installation.html#configuration).
 
@@ -142,7 +142,7 @@ GitHub using the respective functions of poetry or pip.
 
 This repo also contains a `docker compose` workflow to create the example
 database using BioCypher and load it into a dockerised Neo4j instance
-automatically. To run it, simply execute `docker compose up -d` in the root 
+automatically. To run it, simply execute `docker compose up -d` in the root
 directory of the project. This will start up a single (detached) docker
 container with a Neo4j instance that contains the knowledge graph built by
 BioCypher as the DB `neo4j` (the default DB), which you can connect to and
@@ -175,21 +175,21 @@ TODO: describe full pipeline hoe to set it up
 Needed preprocessing of the ontologies:
 
 ## Snomed CT
-The Snomed CT ontology is not provided in the formats, which are used by BioCypher. 
+The Snomed CT ontology is not provided in the formats, which are used by BioCypher.
 Thus, to get a suitable ontology file for BioCypher the following steps are needed:
 1. Download a recent Snomed CT release (e.g. from [here](https://www.nlm.nih.gov/healthit/snomedct/international.html)).
 2. Use the [snomed-owl-toolkit](https://github.com/IHTSDO/snomed-owl-toolkit) to generate an OWL file from the downloaded Snomed CT release (in RF2 file format).
 Therefore, download the executable jar file from [here](https://github.com/IHTSDO/snomed-owl-toolkit/releases) and run
 `java -Xms4g -jar snomed-owl-toolkit-3.0.6-executable.jar -rf2-to-owl -rf2-snapshot-archives <SNOMED-CT>.zip`. This generates a functional OWL file.
 4. BioCypher only supports normal OWL files. To convert the functional OWL file into a normal OWL file you can use [robot](http://robot.obolibrary.org/).
-Download the executable jar file from [here](https://github.com/ontodev/robot/releases) and run 
+Download the executable jar file from [here](https://github.com/ontodev/robot/releases) and run
 `java -Xms4g -jar robot.jar convert -i <ontology-2023-10-23_09-55-46>.owl --format owl -o ./<snomed-ct-ontology>.owl`
 5. Finally, you can place the generated OWL file in the `config/ontologies` folder with the name TODO and use it in the `biocypher_config.yaml` file.
 
 ## ICD10
 1. Download the ICD10 ontology file from [here](https://bioportal.bioontology.org/ontologies/ICD10CM) (select the RDF/TTL file).
 2. Manual steps to make ICD ontology usable:
-    Replace skos:prefLabel with rdfs:label 
+    Replace skos:prefLabel with rdfs:label
 3. Add the following to the ontology file (the original ontology does not contain one root node (as part of the ontology file -> thus the ontology can not be loaded at once into BioCypher) -> solution: add root node manually
 ```
 <Icdroot> a owl:Class;

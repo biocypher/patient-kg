@@ -1,11 +1,12 @@
 from enum import Enum, auto
-from itertools import chain
 from typing import Optional
-import numpy as np
+from itertools import chain
 
-import pandas as pd
-import yaml
 from biocypher._logger import logger
+import yaml
+
+import numpy as np
+import pandas as pd
 
 from patient_kg.adapters.edge_data_classes import Edge
 from patient_kg.adapters.node_data_classes import Node
@@ -81,15 +82,16 @@ class ClinicalDatasetAdapter:
         edge_types: Optional[list] = None,
         edge_fields: Optional[list] = None,
     ):
-        self._set_types_and_fields(node_types, node_fields, edge_types, edge_fields)
+        self._set_types_and_fields(
+            node_types, node_fields, edge_types, edge_fields
+        )
         self.dataset = pd.read_csv(data_file_path)
         # self.dataset = pd.read_excel(data_file_path)
         self.dataset.columns = self.dataset.columns.str.strip()
         # Hack: to make direct insertion of columns wihtout ontology mapping possible
         self.dataset.columns = self.dataset.columns.str.replace("'", "")
-        with open(mapping_file_path, 'r') as yaml_file:
+        with open(mapping_file_path, "r") as yaml_file:
             self.dataset_mapping = yaml.safe_load(yaml_file)
-
 
     def get_nodes(self):
         """
@@ -112,19 +114,32 @@ class ClinicalDatasetAdapter:
             if object_type == "concept":
                 # add node concepts (each column is one node representing one snomedct concept)
                 if coding_system == "not_mapped_to_ontology":
-                    node = Node.create_instance(node, None, {}, coding_system, object_type)
+                    node = Node.create_instance(
+                        node, None, {}, coding_system, object_type
+                    )
                 else:
-                    node = Node.create_instance(str(id_in_coding_system), None, {}, coding_system, object_type)
+                    node = Node.create_instance(
+                        str(id_in_coding_system),
+                        None,
+                        {},
+                        coding_system,
+                        object_type,
+                    )
                 self.nodes.append(node)
             elif object_type == "instance":
                 # add node instances (each row is an own node)
                 for row in self.dataset[node]:
-                    node = Node.create_instance(str(id_in_coding_system) + "_" + str(row), None, {}, coding_system, object_type)
+                    node = Node.create_instance(
+                        str(id_in_coding_system) + "_" + str(row),
+                        None,
+                        {},
+                        coding_system,
+                        object_type,
+                    )
                     self.nodes.append(node)
 
         for node in self.nodes:
             yield (node.get_id(), node.get_label(), node.get_properties())
-
 
     def get_edges(self):
         """
@@ -152,41 +167,86 @@ class ClinicalDatasetAdapter:
             if not isinstance(target_nodes_list, list):
                 raise TypeError("Target nodes must be defined as a list")
 
-            source_node_id = self.dataset_mapping["Nodes"][source_node]["id_in_coding_system"]
+            source_node_id = self.dataset_mapping["Nodes"][source_node][
+                "id_in_coding_system"
+            ]
             target_nodes_dict = {}
             for target_node_name in target_nodes_list:
-                if self.dataset_mapping["Nodes"][target_node_name]["coding_system"] == "not_mapped_to_ontology":
+                if (
+                    self.dataset_mapping["Nodes"][target_node_name][
+                        "coding_system"
+                    ]
+                    == "not_mapped_to_ontology"
+                ):
                     target_nodes_dict[target_node_name] = target_node_name
                 else:
-                    target_nodes_dict[self.dataset_mapping["Nodes"][target_node_name]["id_in_coding_system"]] = target_node_name
+                    target_nodes_dict[
+                        self.dataset_mapping["Nodes"][target_node_name][
+                            "id_in_coding_system"
+                        ]
+                    ] = target_node_name
 
             for target_node_id, target_node_value in target_nodes_dict.items():
                 for row_index, row in self.dataset.iterrows():
-                    relationship_id = "E" + str(edge_id)
-                    edge_id += 1
-
-                    source_node_id_instance = f"{source_node_id}_{int(row[source_node])}"
+                    source_node_id_instance = (
+                        f"{source_node_id}_{int(row[source_node])}"
+                    )
 
                     properties = {}
                     if defined_properties is not None:
                         # weighted edge_name
                         for property in defined_properties:
-                            if not np.isnan(row[target_node_value]):
-                                if defined_properties[property]["type"] == "int":
-                                    properties[property] = int(row[target_node_value])
-                                elif defined_properties[property]["type"] == "float":
-                                    properties[property] = float(row[target_node_value])
-                        edge = Edge.create_instance(relationship_id, source_node_id_instance, target_node_id, edge_name, properties)
+                            if (
+                                not pd.isna(row[target_node_value])
+                                or row[target_node_value] == ""
+                            ):
+                                if (
+                                    defined_properties[property]["type"]
+                                    == "int"
+                                ):
+                                    properties[property] = int(
+                                        row[target_node_value]
+                                    )
+                                elif (
+                                    defined_properties[property]["type"]
+                                    == "float"
+                                ):
+                                    properties[property] = float(
+                                        row[target_node_value]
+                                    )
+                        if properties != {}:
+                            relationship_id = "E" + str(edge_id)
+                            edge_id += 1
+                            edge = Edge.create_instance(
+                                relationship_id,
+                                source_node_id_instance,
+                                target_node_id,
+                                edge_name,
+                                properties,
+                            )
                     if row[target_node_value] == 1:
                         # binary edge_name
-                        edge = Edge.create_instance(relationship_id, source_node_id_instance, target_node_id, edge_name, properties)
+                        relationship_id = "E" + str(edge_id)
+                        edge_id += 1
+                        edge = Edge.create_instance(
+                            relationship_id,
+                            source_node_id_instance,
+                            target_node_id,
+                            edge_name,
+                            properties,
+                        )
 
                     if edge is not None:
                         # logger.info(f"Adding edge_name {edge.get_relationship_id()}, {edge.get_source_node_id()}, {edge.get_target_node_id()}, {edge.get_label()}, {edge.get_properties()}")
                         self.edges.add(edge)
         for edge in self.edges:
-            yield (edge.get_relationship_id(), edge.get_source_node_id(), edge.get_target_node_id(), edge.get_label(), edge.get_properties())
-
+            yield (
+                edge.get_relationship_id(),
+                edge.get_source_node_id(),
+                edge.get_target_node_id(),
+                edge.get_label(),
+                edge.get_properties(),
+            )
 
     def get_node_count(self):
         """
@@ -194,7 +254,9 @@ class ClinicalDatasetAdapter:
         """
         return len(list(self.get_nodes()))
 
-    def _set_types_and_fields(self, node_types, node_fields, edge_types, edge_fields):
+    def _set_types_and_fields(
+        self, node_types, node_fields, edge_types, edge_fields
+    ):
         if node_types:
             self.node_types = node_types
         else:

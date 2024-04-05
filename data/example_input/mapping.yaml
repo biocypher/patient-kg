@@ -1,0 +1,77 @@
+Nodes:
+  # clinical terms (Snomed CT)
+  Patient ID:
+    coding_system: snomedct
+    object_type: instance
+    id_in_coding_system: 116154003
+  Overall Survival (days):
+    coding_system: snomedct
+    object_type: concept
+    id_in_coding_system: 445320007
+  Clinical_Oxygen saturation in Arterial blood ; %:
+    coding_system: snomedct
+    object_type: concept
+    id_in_coding_system: 442476006
+  # Lab values (Loinc)
+  LAB_Eos. Granulozyten# ; /nl:
+    coding_system: loinc
+    object_type: concept
+    id_in_coding_system: 26449-9
+  # Diseases (ICD)
+  ICD_B95:
+    coding_system: icd10
+    object_type: concept
+    id_in_coding_system: B95
+  ICD_A02:
+    coding_system: icd10
+    object_type: concept
+    id_in_coding_system: A02
+  Cancer_C01:
+    coding_system: icd10
+    object_type: concept
+    id_in_coding_system: C01
+  # Operations and procedures (german OPS)
+  OPS_1-100:
+    coding_system: ops
+    object_type: concept
+    id_in_coding_system: 1-100
+  # not mapped columns
+  not_mapped_discrete_value:
+    coding_system: not_mapped_to_ontology
+    object_type: concept
+    id_in_coding_system: .nan
+  not_mapped_continuous_value:
+    coding_system: not_mapped_to_ontology
+    object_type: concept
+    id_in_coding_system: .nan
+
+Edges:
+  HAS_CLINICAL_PARAMETER:
+    source_node: Patient ID
+    target_nodes: [Overall Survival (days), Clinical_Oxygen saturation in Arterial blood ; %]
+    properties:
+      value:
+        type: float # TODO: use float because int is also float (but is this really a good solution?)
+  HAS_LAB_VALUE:
+    source_node: Patient ID
+    target_nodes: [LAB_Eos. Granulozyten# ; /nl]
+    properties:
+      value:
+        type: float
+  HAS_DISEASE:
+    source_node: Patient ID
+    target_nodes: [ICD_B95, ICD_A02, Cancer_C01]
+  HAS_TREATMENT:
+    source_node: Patient ID
+    target_nodes: [OPS_1-100]
+  NOT_DEFINED_BINARY:
+    source_node: Patient ID
+    target_nodes:
+      - not_mapped_discrete_value
+  NOT_DEFINED_CONTINUOUS:
+    properties:
+      value:
+        type: float
+    source_node: Patient ID
+    target_nodes:
+      - not_mapped_continuous_value

@@ -1,15 +1,16 @@
 from biocypher import BioCypher
+
 from patient_kg.adapters.clinical_dataset_adapter import (
     ClinicalDatasetAdapter,
-    SnomedCTAdapterNodeType,
     SnomedCTAdapterEdgeType,
+    SnomedCTAdapterNodeType,
 )
 
 # Instantiate the BioCypher interface
 # You can use `config/biocypher_config.yaml` to configure the framework or
 # supply settings via parameters below
 bc = BioCypher(
-    #biocypher_config_path="config/biocypher_docker_config.yaml",
+    # biocypher_config_path="config/biocypher_docker_config.yaml",
     biocypher_config_path="config/biocypher_config.yaml",
     # schema_config_path="config/old_schema_config.yaml",
     schema_config_path="config/generated_schema_config_for_data.yaml",
@@ -56,7 +57,7 @@ bc.write_edges(adapter.get_edges())
 bc.write_import_call()
 
 # Print summary
-#bc.show_ontology_structure(full=True)
-#bc.log_missing_input_labels()
-#bc.log_duplicates()
+# bc.show_ontology_structure(full=True)
+# bc.log_missing_input_labels()
+# bc.log_duplicates()
 bc.summary()

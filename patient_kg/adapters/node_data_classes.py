@@ -1,20 +1,26 @@
 from abc import ABC, abstractmethod
 
-import icd10
 from biocypher import logger
+import icd10
 
 from patient_kg.adapters.snomed_ct_api import get_snomed_name
 
 
 class Node(ABC):
-
-    def __init__(self, id: str, label:str=None, properties: dict= None, coding_system: str=None, object_type: str=None):
+    def __init__(
+        self,
+        id: str,
+        label: str = None,
+        properties: dict = None,
+        coding_system: str = None,
+        object_type: str = None,
+    ):
         self.id = id
         if label is None:
             if object_type == "concept":
                 label = self.get_label_from_id(str(self.id))
             elif object_type == "instance":
-                concept_id_without_instance_id = str(self.id).rsplit('_', 1)[0]
+                concept_id_without_instance_id = str(self.id).rsplit("_", 1)[0]
                 label = self.get_label_from_id(concept_id_without_instance_id)
         self.label = label
         if properties is None:
@@ -35,18 +41,29 @@ class Node(ABC):
         return self.properties
 
     @classmethod
-    def create_instance(cls, id: str, label: str=None, properties:dict={}, coding_system: str=None, object_type:str="concept"):
+    def create_instance(
+        cls,
+        id: str,
+        label: str = None,
+        properties: dict = {},
+        coding_system: str = None,
+        object_type: str = "concept",
+    ):
         # Choose and create a concrete class based on the parameter
-        if coding_system == 'icd10':
+        if coding_system == "icd10":
             return ICDNode(id, label, properties, coding_system, object_type)
-        elif coding_system == 'snomedct':
-            return SnomedCTNode(id, label, properties, coding_system, object_type)
-        elif coding_system == 'ops':
+        elif coding_system == "snomedct":
+            return SnomedCTNode(
+                id, label, properties, coding_system, object_type
+            )
+        elif coding_system == "ops":
             return OPSNode(id, label, properties, coding_system, object_type)
-        elif coding_system == 'loinc':
+        elif coding_system == "loinc":
             return LoincNode(id, label, properties, coding_system, object_type)
-        elif coding_system == 'not_mapped_to_ontology':
-            return NotMappedNode(id, label, properties, coding_system, object_type)
+        elif coding_system == "not_mapped_to_ontology":
+            return NotMappedNode(
+                id, label, properties, coding_system, object_type
+            )
         else:
             raise ValueError(f"No node class for {coding_system} coding system")
 
@@ -64,11 +81,15 @@ class ICDNode(Node):
 
 class SnomedCTNode(Node):
     def get_label_from_id(self, id: str):
-        label_in_input = get_snomed_name(id).lower() # getConceptById(str(id)).lower()
+        label_in_input = get_snomed_name(
+            id
+        ).lower()  # getConceptById(str(id)).lower()
         if label_in_input:
             return label_in_input
         else:
-            logger.warning(f"SnomedCT code {id} not found in the snomedct package.")
+            logger.warning(
+                f"SnomedCT code {id} not found in the snomedct package."
+            )
             return None
 
 
@@ -83,16 +104,18 @@ class LoincNode(Node):
         # TODO
         return id
 
+
 class NotMappedNode(Node):
     def get_label_from_id(self, id: str):
         return id
 
-#instance_A = Node.create_instance("B90", None, {}, "icd10", "concept")
-#instance_B = Node.create_instance('B91_1', None, {}, "icd10", "instance")
 
-#print(instance_A.get_id())
-#print(instance_A.label)
-#print(instance_A.properties)
-#print(instance_B.id)
-#print(instance_B.label)
-#print(instance_B.properties)
+# instance_A = Node.create_instance("B90", None, {}, "icd10", "concept")
+# instance_B = Node.create_instance('B91_1', None, {}, "icd10", "instance")
+
+# print(instance_A.get_id())
+# print(instance_A.label)
+# print(instance_A.properties)
+# print(instance_B.id)
+# print(instance_B.label)
+# print(instance_B.properties)
