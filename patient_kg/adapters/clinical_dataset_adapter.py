@@ -113,7 +113,10 @@ class ClinicalDatasetAdapter:
 
             if object_type == "concept":
                 # add node concepts (each column is one node representing one snomedct concept)
-                if coding_system == "not_mapped_to_ontology":
+                if (
+                    coding_system == "not_mapped_to_ontology_binary"
+                    or coding_system == "not_mapped_to_ontology_continuous"
+                ):
                     node = Node.create_instance(
                         node, None, {}, coding_system, object_type
                     )
@@ -172,11 +175,14 @@ class ClinicalDatasetAdapter:
             ]
             target_nodes_dict = {}
             for target_node_name in target_nodes_list:
+                tragte_node_coding_system = self.dataset_mapping["Nodes"][
+                    target_node_name
+                ]["coding_system"]
                 if (
-                    self.dataset_mapping["Nodes"][target_node_name][
-                        "coding_system"
-                    ]
-                    == "not_mapped_to_ontology"
+                    tragte_node_coding_system == "not_mapped_to_ontology_binary"
+                ) or (
+                    tragte_node_coding_system
+                    == "not_mapped_to_ontology_continuous"
                 ):
                     target_nodes_dict[target_node_name] = target_node_name
                 else:
