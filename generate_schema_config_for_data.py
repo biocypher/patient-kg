@@ -48,10 +48,7 @@ for defined_node in dataset_mapping["Nodes"]:
 
     # terms with missing mapping to ontology
     # handle by using explicit inheritance
-    if (
-        coding_system == "not_mapped_to_ontology_binary"
-        or coding_system == "not_mapped_to_ontology_continuous"
-    ):
+    if "not_mapped_to_ontology" in coding_system:
         schema_config_data[node_label]["is_a"] = "notmappedtoontology"
 
 for edge in dataset_mapping["Edges"]:

@@ -60,7 +60,7 @@ class Node(ABC):
             return OPSNode(id, label, properties, coding_system, object_type)
         elif coding_system == "loinc":
             return LoincNode(id, label, properties, coding_system, object_type)
-        elif coding_system == "not_mapped_to_ontology":
+        elif "not_mapped_to_ontology" in coding_system:
             return NotMappedNode(
                 id, label, properties, coding_system, object_type
             )
