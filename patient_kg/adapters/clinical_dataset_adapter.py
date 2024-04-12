@@ -170,49 +170,75 @@ class ClinicalDatasetAdapter:
             source_node_id = self.dataset_mapping["Nodes"][source_node][
                 "id_in_coding_system"
             ]
-            target_nodes_dict = {}
+            target_node_id_to_col_name = {}
             for target_node_name in target_nodes_list:
                 target_node_coding_system = self.dataset_mapping["Nodes"][
                     target_node_name
                 ]["coding_system"]
                 if "not_mapped_to_ontology" in target_node_coding_system:
-                    target_nodes_dict[target_node_name] = target_node_name
+                    target_node_id_to_col_name[
+                        target_node_name
+                    ] = target_node_name
                 else:
-                    target_nodes_dict[
+                    target_node_id_to_col_name[
                         self.dataset_mapping["Nodes"][target_node_name][
                             "id_in_coding_system"
                         ]
                     ] = target_node_name
 
-            for target_node_id, target_node_value in target_nodes_dict.items():
+            for (
+                target_node_id,
+                target_node_col_name,
+            ) in target_node_id_to_col_name.items():
+                target_node_col_value_type = self.dataset_mapping["Nodes"][
+                    target_node_col_name
+                ]["col_value_type"]
+
                 for row_index, row in self.dataset.iterrows():
+                    edge = None
                     source_node_id_instance = (
                         f"{source_node_id}_{int(row[source_node])}"
                     )
-
                     properties = {}
-                    if defined_properties is not None:
-                        # weighted edge_name
-                        for property in defined_properties:
-                            if (
-                                not pd.isna(row[target_node_value])
-                                or row[target_node_value] == ""
-                            ):
+
+                    if (
+                        target_node_col_value_type == "continuous"
+                        or target_node_col_value_type == "categorical"
+                    ):
+                        if defined_properties is not None:
+                            # weighted edge_name
+                            for property in defined_properties:
                                 if (
-                                    defined_properties[property]["type"]
-                                    == "int"
+                                    not pd.isna(row[target_node_col_name])
+                                    or row[target_node_col_name] == ""
                                 ):
-                                    properties[property] = int(
-                                        row[target_node_value]
-                                    )
-                                elif (
-                                    defined_properties[property]["type"]
-                                    == "float"
-                                ):
-                                    properties[property] = float(
-                                        row[target_node_value]
-                                    )
-                        if properties != {}:
+                                    if (
+                                        defined_properties[property]["type"]
+                                        == "int"
+                                    ):
+                                        properties[property] = int(
+                                            row[target_node_col_name]
+                                        )
+                                    elif (
+                                        defined_properties[property]["type"]
+                                        == "float"
+                                    ):
+                                        properties[property] = float(
+                                            row[target_node_col_name]
+                                        )
+                            if properties != {}:
+                                relationship_id = "E" + str(edge_id)
+                                edge_id += 1
+                                edge = Edge.create_instance(
+                                    relationship_id,
+                                    source_node_id_instance,
+                                    target_node_id,
+                                    edge_name,
+                                    properties,
+                                )
+                    if target_node_col_value_type == "binary":
+                        if row[target_node_col_name] == 1:
+                            # binary edge_name
                             relationship_id = "E" + str(edge_id)
                             edge_id += 1
                             edge = Edge.create_instance(
@@ -222,17 +248,6 @@ class ClinicalDatasetAdapter:
                                 edge_name,
                                 properties,
                             )
-                    if row[target_node_value] == 1:
-                        # binary edge_name
-                        relationship_id = "E" + str(edge_id)
-                        edge_id += 1
-                        edge = Edge.create_instance(
-                            relationship_id,
-                            source_node_id_instance,
-                            target_node_id,
-                            edge_name,
-                            properties,
-                        )
 
                     if edge is not None:
                         # logger.info(f"Adding edge_name {edge.get_relationship_id()}, {edge.get_source_node_id()}, {edge.get_target_node_id()}, {edge.get_label()}, {edge.get_properties()}")

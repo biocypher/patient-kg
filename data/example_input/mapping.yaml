@@ -4,57 +4,104 @@ Nodes:
     coding_system: snomedct
     object_type: instance
     id_in_coding_system: 116154003
+    col_value_type: categorical
   Overall Survival (days):
     coding_system: snomedct
     object_type: concept
     id_in_coding_system: 445320007
+    col_value_type: continuous
+  death_observed:
+    coding_system: snomedct
+    object_type: concept
+    id_in_coding_system: 419620001
+    col_value_type: continuous
   Clinical_Oxygen saturation in Arterial blood ; %:
     coding_system: snomedct
     object_type: concept
     id_in_coding_system: 442476006
+    col_value_type: continuous
+  gender_female:
+    coding_system: snomedct
+    object_type: concept
+    id_in_coding_system: 1086007
+    col_value_type: binary
   # Lab values (Loinc)
   LAB_Eos. Granulozyten# ; /nl:
     coding_system: loinc
     object_type: concept
     id_in_coding_system: 26449-9
+    col_value_type: continuous
+  Grading:
+    coding_system: loinc
+    object_type: concept
+    id_in_coding_system: 59542-1
+    col_value_type: categorical
+  KRAS:
+    coding_system: loinc
+    object_type: concept
+    id_in_coding_system: 21702-6
+    col_value_type: binary
   # Diseases (ICD)
   ICD_B95:
     coding_system: icd10
     object_type: concept
     id_in_coding_system: B95
+    col_value_type: binary
   ICD_A02:
     coding_system: icd10
     object_type: concept
     id_in_coding_system: A02
+    col_value_type: binary
   Cancer_C01:
     coding_system: icd10
     object_type: concept
     id_in_coding_system: C01
+    col_value_type: binary
   # Operations and procedures (german OPS)
   OPS_1-100:
     coding_system: ops
     object_type: concept
     id_in_coding_system: 1-100
+    col_value_type: binary
   # not mapped columns
-  not_mapped_discrete_value:
+  not_mapped_binary_value:
     coding_system: not_mapped_to_ontology
     object_type: concept
     id_in_coding_system: .nan
+    col_value_type: binary
   not_mapped_continuous_value:
     coding_system: not_mapped_to_ontology
     object_type: concept
     id_in_coding_system: .nan
+    col_value_type: continuous
+  not_mapped_categorical_value:
+    coding_system: not_mapped_to_ontology
+    object_type: concept
+    id_in_coding_system: .nan
+    col_value_type: categorical
 
 Edges:
-  HAS_CLINICAL_PARAMETER:
+  HAS_CLINICAL_PARAMETER_BINARY:
     source_node: Patient ID
-    target_nodes: [Overall Survival (days), Clinical_Oxygen saturation in Arterial blood ; %]
+    target_nodes: [gender_female]
+  HAS_CLINICAL_PARAMETER_CONTINUOUS:
+    source_node: Patient ID
+    target_nodes: [Overall Survival (days), death_observed, Clinical_Oxygen saturation in Arterial blood ; %]
     properties:
       value:
-        type: float # TODO: use float because int is also float (but is this really a good solution?)
-  HAS_LAB_VALUE:
+        type: float
+  HAS_LAB_VALUE_BINARY:
+    source_node: Patient ID
+    target_nodes: [KRAS]
+  HAS_LAB_VALUE_CONTINUOUS:
     source_node: Patient ID
     target_nodes: [LAB_Eos. Granulozyten# ; /nl]
+    properties:
+      value:
+        type: float
+  HAS_LAB_VALUE_CATEGORICAL:
+    source_node: Patient ID
+    target_nodes: [Grading]
     properties:
       value:
         type: float
@@ -67,7 +114,7 @@ Edges:
   NOT_DEFINED_BINARY:
     source_node: Patient ID
     target_nodes:
-      - not_mapped_discrete_value
+      - not_mapped_binary_value
   NOT_DEFINED_CONTINUOUS:
     properties:
       value:
@@ -75,3 +122,10 @@ Edges:
     source_node: Patient ID
     target_nodes:
       - not_mapped_continuous_value
+  NOT_DEFINED_CATEGORICAL:
+    properties:
+      value:
+        type: float
+    source_node: Patient ID
+    target_nodes:
+      - not_mapped_categorical_value
