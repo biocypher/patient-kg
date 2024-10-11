@@ -166,7 +166,7 @@ configured in the `docker-compose.yml` file
 default.
 
 
-# TODO: restructure the Readme and include the following:
+<!---# TODO: restructure the Readme and include the following:
 
 This Knowledge Graph uses Snomed CT, ICD10 and Loinc as ontologies.
 
@@ -201,3 +201,4 @@ Download the executable jar file from [here](https://github.com/ontodev/robot/re
 ## Loinc
 
 TODO
+-->
